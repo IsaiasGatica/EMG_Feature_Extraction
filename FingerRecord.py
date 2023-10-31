@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PIL import Image, ImageTk  # Importa la biblioteca Pillow
 import os
+from datetime import datetime
 
 # Variables globales para el hilo de lectura y el estado de la lectura
 lector_activo = False
@@ -29,12 +30,35 @@ def reproducir():
     nombre_dedo = entrada_nombre_dedo.get()
     if nombre_dedo:
         boton_play.config(state=tk.DISABLED)
-        hora_actual = obtener_hora_actual()
         nombre_carpeta_records = "Records"
-        nombre_archivo_csv = os.path.join(
-            nombre_carpeta_records, f"{nombre_dedo}_{hora_actual}_datos.csv"
-        )
-        # nombre_archivo_csv = f"{nombre_dedo}_{hora_actual}_datos.csv"  # Utiliza el nombre del dedo para el nombre del archivo CSV
+        nombre_carpeta_fecha = datetime.now().strftime("%Y-%m-%d")
+        if not os.path.exists(nombre_carpeta_records):
+            os.makedirs(
+                nombre_carpeta_records
+            )  # Crear la carpeta "Records" si no existe
+        if not os.path.exists(
+            os.path.join(nombre_carpeta_records, nombre_carpeta_fecha)
+        ):
+            os.makedirs(
+                os.path.join(nombre_carpeta_records, nombre_carpeta_fecha)
+            )  # Crear carpeta con la fecha del día si no existe
+
+        nombre_archivo_base = f"{nombre_dedo}.csv"
+        ruta_carpeta = os.path.join(nombre_carpeta_records, nombre_carpeta_fecha)
+        ruta_archivo = os.path.join(ruta_carpeta, nombre_archivo_base)
+
+        if os.path.exists(ruta_archivo):
+            indice = 1
+            # Buscar un nombre de archivo único con un índice
+            while True:
+                nombre_archivo_csv = os.path.join(
+                    ruta_carpeta, f"{nombre_dedo}_{indice}.csv"
+                )
+                if not os.path.exists(nombre_archivo_csv):
+                    break
+                indice += 1
+        else:
+            nombre_archivo_csv = ruta_archivo
         etiqueta_estado.config(text=f"Leyendo datos de {nombre_dedo}...")
         lector_activo = True
         thread_lector = threading.Thread(target=leer_puerto_serial)
@@ -100,6 +124,7 @@ def actualizar_grafico():
     ax.plot(tiempos, datos)
     ax.set_xlabel("Muestras")
     ax.set_ylabel("Señal EMG")
+    ax.grid(True)
 
     canvas.draw()
 
@@ -197,7 +222,7 @@ dedo_pulgar = dedo_pulgar.resize((62, 62))
 dedo_pulgar = ImageTk.PhotoImage(dedo_pulgar)
 
 boton_pulgar = tk.Button(
-    frame_botones_dedos, image=dedo_pulgar, command=lambda: llenar_dedo("Dedo_Pulgar")
+    frame_botones_dedos, image=dedo_pulgar, command=lambda: llenar_dedo("Pulgar")
 )
 boton_pulgar.pack(side=tk.LEFT, padx=5)
 
@@ -208,7 +233,7 @@ dedo_indice = dedo_indice.resize((62, 62))
 dedo_indice = ImageTk.PhotoImage(dedo_indice)
 
 boton_indice = tk.Button(
-    frame_botones_dedos, image=dedo_indice, command=lambda: llenar_dedo("Dedo_Indice")
+    frame_botones_dedos, image=dedo_indice, command=lambda: llenar_dedo("Indice")
 )
 boton_indice.pack(side=tk.LEFT, padx=5)
 
@@ -219,7 +244,7 @@ dedo_medio = dedo_medio.resize((62, 62))
 dedo_medio = ImageTk.PhotoImage(dedo_medio)
 
 boton_medio = tk.Button(
-    frame_botones_dedos, image=dedo_medio, command=lambda: llenar_dedo("Dedo_Medio")
+    frame_botones_dedos, image=dedo_medio, command=lambda: llenar_dedo("Medio")
 )
 boton_medio.pack(side=tk.LEFT, padx=5)
 
@@ -230,7 +255,7 @@ dedo_anular = dedo_anular.resize((62, 62))
 dedo_anular = ImageTk.PhotoImage(dedo_anular)
 
 boton_anular = tk.Button(
-    frame_botones_dedos, image=dedo_anular, command=lambda: llenar_dedo("Dedo_Anular")
+    frame_botones_dedos, image=dedo_anular, command=lambda: llenar_dedo("Anular")
 )
 boton_anular.pack(side=tk.LEFT, padx=5)
 
@@ -241,7 +266,7 @@ dedo_meñique = dedo_meñique.resize((62, 62))
 dedo_meñique = ImageTk.PhotoImage(dedo_meñique)
 
 boton_meñique = tk.Button(
-    frame_botones_dedos, image=dedo_meñique, command=lambda: llenar_dedo("Dedo_Meñique")
+    frame_botones_dedos, image=dedo_meñique, command=lambda: llenar_dedo("Meñique")
 )
 boton_meñique.pack(side=tk.LEFT, padx=5)
 
@@ -256,9 +281,7 @@ boton_punio = tk.Button(
 )
 boton_punio.pack(side=tk.LEFT, padx=5)
 
-flexionPunio = Image.open(
-    "Iconos/Punioflexionada.png"
-)  # Reemplaza "Indice.png" con la ruta a tu imagen de botón Indice
+flexionPunio = Image.open("Iconos/Punioflexionada.png")
 flexionPunio = flexionPunio.resize((62, 62))
 flexionPunio = ImageTk.PhotoImage(flexionPunio)
 
@@ -280,7 +303,7 @@ canvas = FigureCanvasTkAgg(fig, master=frame_contenedor)
 canvas.get_tk_widget().pack()
 ax.set_xlabel("Muestras")
 ax.set_ylabel("Señal EMG")
-ax.grid(True)  # Activa la grilla en el gráfico
+ax.grid(True)
 
 # ---------------------------------- Iniciar la aplicación------------------------------------
 ventana.mainloop()
