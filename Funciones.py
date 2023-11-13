@@ -160,7 +160,7 @@ def calcular_MAV(datos):
 
 
 def calcular_STD(datos):
-    std = np.nanstd(datos)
+    std = np.std(datos)
     return std
 
 
@@ -181,7 +181,8 @@ def calcular_WL(datos):
 
 
 def calcular_DMAV(datos):
-    dmav = datos - np.mean(datos)
+    dmav = np.abs(datos - np.mean(datos))
+    dmav = np.mean(dmav)
     return dmav
 
 
@@ -198,3 +199,7 @@ def calcular_SSC(datos):
     ssc = np.sum(np.diff(np.sign(derivative)) != 0)
 
     return ssc
+
+
+def calcular_MAV_lista(lista):
+    return [calcular_MAV(valores) for valores in lista]
