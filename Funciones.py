@@ -201,5 +201,5 @@ def calcular_SSC(datos):
     return ssc
 
 
-def calcular_MAV_lista(lista):
-    return [calcular_MAV(valores) for valores in lista]
+def calcular_caracteristica_lista(listas, funcion_calculo):
+    return [[funcion_calculo(valores) for valores in sublist] for sublist in listas]
