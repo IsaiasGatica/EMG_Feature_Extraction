@@ -111,7 +111,7 @@ def graficar_listas(*senal_lists, names=None, titulo=""):
             go.Scatter(
                 x=list(range(len(senal_list))),
                 y=senal_list,
-                mode="markers",
+                mode="lines",
                 name=nombre,
             )
         )
