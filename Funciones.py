@@ -201,5 +201,24 @@ def calcular_SSC(datos):
     return ssc
 
 
+def calcular_Entropy(datos):
+    # Asegurarse de que no haya ceros en los datos
+    datos_no_cero = datos - np.min(datos) + 1e-10  # Ajustar y agregar un valor pequeño
+
+    # Calcular la entropía
+    entropia = -np.sum(
+        (datos_no_cero / np.sum(datos_no_cero))
+        * np.log2(datos_no_cero / np.sum(datos_no_cero))
+    )
+
+    return entropia
+
+
+def calcular_Mean_Derivative(datos):
+    derivative = np.diff(datos)
+    mean_derivative = np.mean(derivative)
+    return mean_derivative
+
+
 def calcular_caracteristica_lista(listas, funcion_calculo):
     return [[funcion_calculo(valores) for valores in sublist] for sublist in listas]
