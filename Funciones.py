@@ -164,6 +164,11 @@ def calcular_STD(datos):
     return std
 
 
+def contar_valores_menores_200(datos):
+    cantidad_menores_200 = np.sum(datos < 200)
+    return cantidad_menores_200
+
+
 def calcular_RMS(datos):
     rms = np.sqrt(np.mean(np.square(datos)))
     return rms
